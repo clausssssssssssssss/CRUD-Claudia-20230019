@@ -39,6 +39,14 @@ class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adap
         notifyItemChanged(posicion)
         notifyDataSetChanged()
 
+        fun actualizarProducto(nombreProducto: String, uuid: String){
+
+            //1.Creo una corrutina
+            GlobalScope.launch(Dispatchers.IO){
+                
+            }
+        }
+
     }
 
 

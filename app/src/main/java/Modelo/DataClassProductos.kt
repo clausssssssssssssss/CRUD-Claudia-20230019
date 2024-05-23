@@ -1,5 +1,9 @@
 package Modelo
 
-data class DataClassProductos(
-    val nombreProductos: String
+data class
+DataClassProductos(
+    val uuid:String,
+    val nombreProductos: String,
+    val precio: Int,
+    val cantidad: Int
 )

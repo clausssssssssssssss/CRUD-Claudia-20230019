@@ -11,12 +11,23 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adapter<ViewHolder>() {
 
-    fun ActualizarLista(nuevaLista: List<DataClassProductos>){
+    fun ActualizarLista(nuevaLista: List<DataClassProductos>) {
         Datos = nuevaLista
         notifyDataSetChanged()
+
+        }
+
+    //Funcion para actualizar recyclerView
+    //Cuando actualizo los datos
+
+    fun actualizarListaDespuesDeActualizarDatos(uuid: String ,nuevoNombre: String){
+        val index = Datos.indexOfFirst { it.uuid == uuid }
+        Datos[index].nombreProducto = nuevoNombre
+        notifyItemChanged(index)
 
     }
     fun eliminarRegristro(nombreProductos: String, posicion: Int){
@@ -57,6 +68,10 @@ class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adap
 
             val commit = objConexion.prepareStatement("commit")!!
             commit.executeUpdate()
+
+            withContext(Dispatchers.Main){
+                actualizarListaDespuesDeActualizarDatos(uuid, nombreProducto)
+            }
         }
     }
 
@@ -69,7 +84,7 @@ class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val producto = Datos[position]
-        holder.textView.text = producto.nombreProductos
+        holder.textView.text = producto.nombreProducto
 
         val item = Datos[position]
         holder.imgBorrar.setOnClickListener {
@@ -89,7 +104,7 @@ class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adap
 
                 //4.Paso final, agregamos los botones
                 builder.setPositiveButton("si"){ dialog, wich ->
-                    eliminarRegristro(item.nombreProductos, position)
+                    eliminarRegristro(item.nombreProducto, position)
 
                 }
 
@@ -111,7 +126,7 @@ class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adap
                 //Agregaremos un cuadro de texto para que el usuario
                 //Pueda escribir el nuevo nombre
                 val cuadritoNuevoNombre = EditText(context)
-                cuadritoNuevoNombre.setHint(item.nombreProductos)
+                cuadritoNuevoNombre.setHint(item.nombreProducto)
                 builder.setView(cuadritoNuevoNombre)
 
                 builder.setPositiveButton("actualizar"){dialog, wich ->

@@ -6,6 +6,7 @@ import Modelo.DataClassProductos
 import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -39,16 +40,25 @@ class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adap
         notifyItemChanged(posicion)
         notifyDataSetChanged()
 
-        fun actualizarProducto(nombreProducto: String, uuid: String){
 
-            //1.Creo una corrutina
-            GlobalScope.launch(Dispatchers.IO){
-                
-            }
-        }
 
     }
+    fun actualizarProducto(nombreProducto: String, uuid: String){
 
+        //1.Creo una corrutina
+        GlobalScope.launch(Dispatchers.IO){
+            //1. Creo n objeto de la clase conexion
+            val objConexion = ClassConexion().cadenaConexion()
+            //2.Creo una variable que contenga un perpareStatament
+            val updateProducto = objConexion?.prepareStatement("update tbProductos set nombreProducto  = ? where uuid =?")!!
+            updateProducto.setString(1, nombreProducto)
+            updateProducto.setString(2,uuid)
+            updateProducto.executeUpdate()
+
+            val commit = objConexion.prepareStatement("commit")!!
+            commit.executeUpdate()
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val vista =            LayoutInflater.from(parent.context).inflate(R.layout.item_card, parent, false)
@@ -90,6 +100,28 @@ class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adap
                 val alertDialog = builder.create()
                 //Mostramos la alerta
                 alertDialog.show()
+            }
+            holder.imgEditar.setOnClickListener {
+
+                val context = holder.itemView.context
+                //creo la alerta
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("Editar nombre")
+
+                //Agregaremos un cuadro de texto para que el usuario
+                //Pueda escribir el nuevo nombre
+                val cuadritoNuevoNombre = EditText(context)
+                cuadritoNuevoNombre.setHint(item.nombreProductos)
+                builder.setView(cuadritoNuevoNombre)
+
+                builder.setPositiveButton("actualizar"){dialog, wich ->
+                    actualizarProducto(cuadritoNuevoNombre.text.toString(), item.uuid)
+                }
+                builder.setNegativeButton("Cancelar"){dialog, wich ->
+                    dialog.dismiss()
+                }
+                val dialog = builder.create()
+                dialog.show()
             }
         }
     }

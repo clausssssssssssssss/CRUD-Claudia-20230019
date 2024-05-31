@@ -15,6 +15,9 @@
         android:theme="@style/Theme.CRUDClaudia2A"
         tools:targetApi="31">
         <activity
+            android:name=".detalle_producto"
+            android:exported="false" />
+        <activity
             android:name=".Item_Card"
             android:exported="false" />
         <activity

@@ -1,9 +1,11 @@
 package RecyclerViewHelper
 
 import Claudia.Ortega.crudclaudia2a.R
+import Claudia.Ortega.crudclaudia2a.detalle_producto
 import Modelo.ClassConexion
 import Modelo.DataClassProductos
 import android.app.AlertDialog
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.EditText
@@ -138,6 +140,20 @@ class Adaptador(private var Datos: List<DataClassProductos>) : RecyclerView.Adap
                 val dialog = builder.create()
                 dialog.show()
             }
+        }
+
+        holder.itemView.setOnClickListener{
+            val context = holder.itemView.context
+            val pantallaDetalles = Intent(context, detalle_producto::class.java)
+            context.startActivity(pantallaDetalles)
+
+            pantallaDetalles.putExtra("uuid", item.uuid)
+            pantallaDetalles.putExtra("nombre", item.nombreProducto)
+            pantallaDetalles.putExtra("precio", item.precio)
+            pantallaDetalles.putExtra("cantidad", item.cantidad)
+
+            context.startActivity(pantallaDetalles)
+
         }
     }
 }
